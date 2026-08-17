@@ -2,29 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-.screen-text {
-  perspective: 400px;
-  transform-style: preserve-3d;
-  height: 40vh;
-  overflow: hidden;
-  position: relative;
-}
-.screen-text > div {
-  font-family: 'Orbitron', sans-serif;
-  color: #ffe81f;
-  text-transform: uppercase;
-  font-weight: 700;
-  position: absolute;
-  width: 100%;
+body {
+  background-color: #0b0907;
 }
 
-.holo-shimmer {
-  position: relative;
-  overflow: hidden;
+/* Fine grain over the whole surface — keeps the flat blacks from looking
+   like empty canvas and suggests airborne sand. */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: radial-gradient(rgba(217, 200, 169, 0.9) 0.5px, transparent 0.5px);
+  background-size: 4px 4px;
 }
-.holo-shimmer::after {
+
+/* Heat shimmer behind the wordmark. */
+.haze {
+  position: relative;
+}
+.haze::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent 0%, rgba(107,229,255,0.08) 45%, transparent 100%);
+  inset: -40% -10%;
+  pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(224, 139, 60, 0.16) 0%, transparent 70%);
+  filter: blur(18px);
+}
+
+/* Thin rule that fades at both ends, used under headings. */
+.rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(224, 139, 60, 0.55), transparent);
+}
+
+/* Scrollbar, so the chat log doesn't get a bright default track. */
+.scroll-sand {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(224, 139, 60, 0.3) transparent;
+}
+.scroll-sand::-webkit-scrollbar {
+  width: 8px;
+}
+.scroll-sand::-webkit-scrollbar-thumb {
+  background: rgba(224, 139, 60, 0.28);
+  border-radius: 999px;
+}
+.scroll-sand::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Three-dot thinking indicator. */
+.dots span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
+  border-radius: 999px;
+  background: #e08b3c;
+  animation: pulse 1.3s ease-in-out infinite;
+}
+.dots span:nth-child(2) { animation-delay: 0.18s; }
+.dots span:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.25; transform: translateY(0); }
+  50%      { opacity: 1;    transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dots span,
+  .animate-haze,
+  .animate-rise {
+    animation: none !important;
+  }
 }
