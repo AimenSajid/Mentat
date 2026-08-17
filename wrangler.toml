@@ -1,0 +1,19 @@
+name = "dune-mentat"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-08-17"
+
+# Workers AI: embeddings for retrieval, and generation. Limited to one AI
+# binding per Pages project. Note that this always hits your Cloudflare
+# account and draws on the neuron allowance, including in local dev.
+[ai]
+binding = "AI"
+
+# Vector store for the Dune corpus. Create the index before deploying:
+#
+#   wrangler vectorize create dune-lore --dimensions=384 --metric=cosine
+#
+# 384 matches @cf/baai/bge-small-en-v1.5. The dimension count is fixed at
+# creation time — changing embedding models later means a new index.
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "dune-lore"

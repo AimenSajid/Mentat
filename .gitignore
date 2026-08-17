@@ -1,4 +1,23 @@
 logs
+*.log
 build/Release
 node_modules/
+dist/
+.vite/
+
 .env
+.env.local
+.env.*.local
+
+# Source corpora for the RAG index. Kept locally only — the vectors live in
+# Vectorize, so these files are just build inputs. starwars.json is 66MB, which
+# GitHub warns about above 50MB and blocks outright at 100MB.
+starwars.json
+dune.json
+
+# Corpus extraction tooling — kept locally for reference, not part of the
+# deployed project.
+scripts/extract-wiki.mjs
+
+.DS_Store
+Thumbs.db

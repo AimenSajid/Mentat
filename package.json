@@ -1,19 +1,18 @@
 {
-  "name": "starwars-chatbot-lite",
+  "name": "dune-mentat",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
+  "description": "A retrieval-augmented Dune lore chatbot running on Cloudflare Workers AI and Vectorize.",
+  "author": "Aimen Sajid",
+  "license": "ISC",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "index": "node scripts/build-index.mjs"
   },
   "dependencies": {
-    "@huggingface/inference": "^4.13.2",
-    "@huggingface/transformers": "^3.7.6",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
