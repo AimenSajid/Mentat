@@ -1,14 +1,19 @@
 name = "mentat"
-pages_build_output_dir = "./dist"
+main = "worker/index.js"
 compatibility_date = "2026-08-17"
 
-# Workers AI: embeddings for retrieval, and generation. Limited to one AI
-# binding per Pages project. Note that this always hits your Cloudflare
-# account and draws on the neuron allowance, including in local dev.
+# The built React app. not_found_handling sends unmatched paths to index.html
+# so client-side routing and page refreshes resolve instead of 404ing.
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+# Workers AI: embeddings for retrieval, and generation.
 #
-# remote = true routes local dev at the real service. There is no local
-# emulation for either of these, so without it the binding is absent from
-# env during `wrangler pages dev`.
+# remote = true routes local dev at the real service. Neither Workers AI nor
+# Vectorize has a local emulation, so without it the binding is absent from
+# env during `wrangler dev`. It is ignored when deployed.
 [ai]
 binding = "AI"
 remote = true

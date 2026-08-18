@@ -1,5 +1,5 @@
 /**
- * Retrieval-augmented chat endpoint.
+ * Retrieval-augmented chat handler.
  *
  * Runs entirely on Cloudflare: Workers AI for both the query embedding and
  * generation, Vectorize for retrieval. No external API key, and no corpus in
@@ -15,6 +15,7 @@ const MAX_CHARS = 1000
 // Must match the model used to build the index. Embeddings from a different
 // model are not comparable, and the index is fixed at 384 dimensions.
 const EMBEDDING_MODEL = "@cf/baai/bge-small-en-v1.5"
+
 // Cloudflare retires models; @cf/meta/llama-3.1-8b-instruct was deprecated in
 // May 2026. If this starts returning error 5028, check the model catalog:
 // https://developers.cloudflare.com/workers-ai/models/
@@ -53,9 +54,7 @@ const json = (body, status = 200) =>
     headers: { "Content-Type": "application/json" },
   })
 
-export async function onRequestPost(context) {
-  const { request, env } = context
-
+export async function handleChat(request, env) {
   try {
     const body = await request.json().catch(() => null)
     const messages = body?.messages ?? []
@@ -133,7 +132,7 @@ export async function onRequestPost(context) {
         })),
     })
   } catch (err) {
-    console.error("Chat function error:", err)
+    console.error("Chat error:", err)
     return json({ error: err.message || "The archives could not be reached." }, 500)
   }
 }

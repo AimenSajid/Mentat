@@ -41,8 +41,8 @@ admit when the archives are silent.
 
 ```
                     ┌─────────────────────────────┐
-   question ──────▶ │  functions/api/chat.js      │
-                    │  (Cloudflare Pages Function)│
+   question ──────▶ │  worker/chat.js             │
+                    │  (Cloudflare Worker)        │
                     └──────────┬──────────────────┘
                                │ 1. embed the question
                                ▼
@@ -75,7 +75,7 @@ at runtime.
 | Layer | |
 | --- | --- |
 | Frontend | React 18, Vite, Tailwind CSS |
-| API | Cloudflare Pages Functions |
+| API | Cloudflare Workers, with static assets |
 | Embeddings | Workers AI — `@cf/baai/bge-small-en-v1.5` |
 | Generation | Workers AI — `@cf/meta/llama-3.1-8b-instruct` |
 | Vector store | Cloudflare Vectorize |
@@ -129,11 +129,24 @@ across files to respect Cloudflare's 5,000-vectors-per-file limit.
 ### 5. Develop
 
 ```bash
-npx wrangler pages dev -- npm run dev
+npm run build
+npx wrangler dev
 ```
 
-Plain `npm run dev` serves the frontend but not the API function, since bindings
-only exist under Wrangler.
+Plain `npm run dev` serves the frontend but not the API route, since bindings
+only exist under Wrangler. Neither Workers AI nor Vectorize has a local
+emulation, so `wrangler.toml` marks both bindings `remote = true` — local runs
+call the real services and draw on the neuron allowance.
+
+### 6. Deploy
+
+```bash
+npm run build
+npx wrangler deploy
+```
+
+Or connect the repository in the Cloudflare dashboard for automatic deploys on
+push. The `AI` and `VECTORIZE` bindings come from `wrangler.toml`.
 
 ## Design notes
 
