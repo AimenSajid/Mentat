@@ -2,6 +2,11 @@ name = "mentat"
 main = "worker/index.js"
 compatibility_date = "2026-08-17"
 
+# Expose the Worker at <name>.<subdomain>.workers.dev. Workers have no public
+# URL unless this is enabled, so a deploy can succeed while the site stays
+# unreachable.
+workers_dev = true
+
 # The built React app. not_found_handling sends unmatched paths to index.html
 # so client-side routing and page refreshes resolve instead of 404ing.
 [assets]
