@@ -1,5 +1,28 @@
-export default function MessageBubble({ role, content }) {
+/**
+ * Collapse the raw match list into one entry per article.
+ *
+ * Long articles are split across several chunks at index time, so a single
+ * source can match more than once. Showing "Paul Atreides · Paul Atreides ·
+ * Arrakis" would look broken; keep each title once, at its best score.
+ */
+function dedupeSources(sources) {
+  const best = new Map()
+
+  for (const { title, score } of sources ?? []) {
+    if (!title) continue
+    if (!best.has(title) || best.get(title) < score) {
+      best.set(title, score)
+    }
+  }
+
+  return [...best.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([title, score]) => ({ title, score }))
+}
+
+export default function MessageBubble({ role, content, sources }) {
   const isAssistant = role === 'assistant'
+  const cited = isAssistant ? dedupeSources(sources) : []
 
   return (
     <div className={`flex animate-rise ${isAssistant ? 'justify-start' : 'justify-end'}`}>
@@ -20,6 +43,25 @@ export default function MessageBubble({ role, content }) {
         >
           <p className="whitespace-pre-wrap">{content}</p>
         </div>
+
+        {cited.length > 0 && (
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <span className="font-body text-[10px] tracking-[0.25em] uppercase text-sand-dim/70">
+              Drawn from
+            </span>
+            {cited.map(({ title, score }) => (
+              <span
+                key={title}
+                className="font-body text-[11px] text-sand-dim border border-sand-dim/25
+                           rounded-sm px-2 py-0.5"
+                title={`Similarity ${score}`}
+              >
+                {title}
+                <span className="text-sand-dim/50 ml-1.5">{score.toFixed(2)}</span>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

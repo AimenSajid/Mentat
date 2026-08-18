@@ -10,7 +10,7 @@ const GREETING =
 // passages will be riding along on top of this once RAG lands.
 const MAX_HISTORY = 10
 
-// Mirrors the cap enforced in functions/api/chat.js, which is the real check.
+// Mirrors the cap enforced in worker/chat.js, which is the real check.
 const MAX_CHARS = 1000
 
 // Date.now() twice in one tick can collide and produce duplicate React keys.
@@ -70,6 +70,9 @@ export default function Chat({ onBack }) {
           id: newId(),
           role: 'assistant',
           content: data.reply || 'The archives are silent. Ask again.',
+          // Which passages the answer was drawn from. Kept on the message so
+          // it stays attached to that specific reply as the log grows.
+          sources: data.sources ?? [],
         },
       ])
     } catch (err) {
@@ -115,7 +118,12 @@ export default function Chat({ onBack }) {
       <div ref={listRef} className="scroll-sand relative z-10 flex-1 overflow-y-auto px-4 md:px-8 py-8">
         <div className="max-w-3xl mx-auto space-y-6">
           {chatHistory.map((m) => (
-            <MessageBubble key={m.id} role={m.role} content={m.content} />
+            <MessageBubble
+              key={m.id}
+              role={m.role}
+              content={m.content}
+              sources={m.sources}
+            />
           ))}
 
           {loading && (
