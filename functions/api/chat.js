@@ -68,7 +68,11 @@ export async function onRequestPost(context) {
     }
 
     if (!env.AI || !env.VECTORIZE) {
-      return json({ error: "Server misconfigured: AI or Vectorize binding missing." }, 500)
+      const missing = [!env.AI && "AI", !env.VECTORIZE && "VECTORIZE"].filter(Boolean)
+      // Binding *names* are not secrets, and knowing which ones the runtime
+      // actually sees is the difference between a five-minute fix and an hour.
+      console.error("Missing binding(s):", missing.join(", "), "— env has:", Object.keys(env).join(", "))
+      return json({ error: `Server misconfigured: ${missing.join(" and ")} binding missing.` }, 500)
     }
 
     // Retrieve against the latest user message, not the whole transcript —

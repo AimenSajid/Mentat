@@ -5,8 +5,13 @@ compatibility_date = "2026-08-17"
 # Workers AI: embeddings for retrieval, and generation. Limited to one AI
 # binding per Pages project. Note that this always hits your Cloudflare
 # account and draws on the neuron allowance, including in local dev.
+#
+# remote = true routes local dev at the real service. There is no local
+# emulation for either of these, so without it the binding is absent from
+# env during `wrangler pages dev`.
 [ai]
 binding = "AI"
+remote = true
 
 # Vector store for the Dune corpus. Create the index before deploying:
 #
@@ -17,3 +22,4 @@ binding = "AI"
 [[vectorize]]
 binding = "VECTORIZE"
 index_name = "dune-lore"
+remote = true

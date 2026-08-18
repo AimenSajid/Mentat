@@ -15,6 +15,10 @@ dist/
 starwars.json
 dune.json
 
+# Generated embedding files, uploaded to Vectorize and then disposable.
+# Tens of megabytes, and reproducible with `npm run index`.
+vectors-*.ndjson
+
 # Corpus extraction tooling — kept locally for reference, not part of the
 # deployed project.
 scripts/extract-wiki.mjs
