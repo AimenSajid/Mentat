@@ -15,7 +15,13 @@ const MAX_CHARS = 1000
 // Must match the model used to build the index. Embeddings from a different
 // model are not comparable, and the index is fixed at 384 dimensions.
 const EMBEDDING_MODEL = "@cf/baai/bge-small-en-v1.5"
-const GENERATION_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+// Cloudflare retires models; @cf/meta/llama-3.1-8b-instruct was deprecated in
+// May 2026. If this starts returning error 5028, check the model catalog:
+// https://developers.cloudflare.com/workers-ai/models/
+//
+// Swap to @cf/meta/llama-3.1-8b-instruct-fast for a cheaper, weaker option —
+// this is the only line that needs to change.
+const GENERATION_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 
 // How many passages to retrieve. The school version of this project conflated
 // "documents to retrieve" with "sentences to keep" behind a single k, which
