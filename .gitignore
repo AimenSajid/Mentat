@@ -15,6 +15,9 @@ dist/
 starwars.json
 dune.json
 
+# Wrangler's local state and cache.
+.wrangler/
+
 # Generated embedding files, uploaded to Vectorize and then disposable.
 # Tens of megabytes, and reproducible with `npm run index`.
 vectors-*.ndjson
