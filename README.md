@@ -1,8 +1,11 @@
 # Mentat
 
+**[mentat.aimensajid953.workers.dev](https://mentat.aimensajid953.workers.dev)**
+
 A retrieval-augmented chatbot that answers questions about the lore of *Dune*,
 drawing on 4,607 wiki articles rather than on whatever the model happens to
-remember.
+remember. Every answer shows which articles it came from, and their similarity
+scores.
 
 In Dune, thinking machines are outlawed — so the Imperium trained humans to
 serve as living computers instead. Those are Mentats. Naming an AI after one is
@@ -10,8 +13,28 @@ a small joke, but the framing is honest about how the thing works: a Mentat's
 skill is recall and analysis over an archive, not invention, and that is exactly
 what retrieval-augmented generation does.
 
-Everything runs on Cloudflare: Workers AI for embeddings and generation,
-Vectorize for the vector store, Pages for the frontend and the API function.
+Everything runs on Cloudflare: a Worker serving both the React frontend and the
+API, Workers AI for embeddings and generation, and Vectorize for the vector
+store. No external API keys.
+
+## It works
+
+Asked about **Zum Garon** — a Sardaukar Bashar obscure enough that an 8B model
+has no chance without help:
+
+> Zum Garon was the Supreme Bashar of the Sardaukar, a position he held for
+> decades… a loyal commander to Emperors Elrood IX and Shaddam IV, leading the
+> Sardaukar armies in various campaigns, including the Great Spice War.
+
+Asked about **Duke Leto's third cousin who ruled Caladan before him** — a person
+who does not exist, phrased to invite invention:
+
+> The archives do not record the name of Duke Leto's third cousin who ruled
+> Caladan before him.
+
+The second matters more than the first. A retrieval system that fabricates when
+the search comes up empty is worse than no retrieval at all, because the failure
+is invisible.
 
 ## Why retrieval
 
@@ -77,7 +100,7 @@ at runtime.
 | Frontend | React 18, Vite, Tailwind CSS |
 | API | Cloudflare Workers, with static assets |
 | Embeddings | Workers AI — `@cf/baai/bge-small-en-v1.5` |
-| Generation | Workers AI — `@cf/meta/llama-3.1-8b-instruct` |
+| Generation | Workers AI — `@cf/meta/llama-3.3-70b-instruct-fp8-fast` |
 | Vector store | Cloudflare Vectorize |
 | Corpus | Dune Fandom wiki, lead sections |
 
@@ -167,6 +190,29 @@ concerns and are configured separately here.
 **Weak matches are dropped.** Below a cosine score of 0.35 a result is noise
 rather than a weak answer, and passing it to the model invites it to build
 something plausible out of nothing.
+
+## Project structure
+
+```
+worker/
+  index.js            Entry point — routes /api/chat, serves assets otherwise
+  chat.js             Embed, retrieve, build the prompt, generate
+scripts/
+  build-index.mjs     One-time: chunk, embed, write NDJSON for Vectorize
+  extract-wiki.mjs    One-time: pull lead sections from a Fandom wiki
+src/
+  main.jsx            React entry point
+  App.jsx             Landing / chat routing
+  pages/Landing.jsx   Title screen
+  pages/Chat.jsx      Chat log, input, history and length caps
+  components/
+    MessageBubble.jsx Message rendering and the source chips
+  styles.css          Tailwind directives, grain, heat haze
+wrangler.toml         Worker config, assets, AI and Vectorize bindings
+```
+
+`dune.json` and the generated `vectors-*.ndjson` are gitignored — they are build
+inputs, reproducible from the two scripts above.
 
 ## Cost
 
